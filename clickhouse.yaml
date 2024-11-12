@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: clickhouse
+  labels:
+    app: clickhouse
+spec:
+  selector:
+    app: clickhouse
+  ports:
+    - name: http   # HTTP port name
+      protocol: TCP
+      port: 8123   # HTTP port
+      targetPort: 8123
+    - name: tcp    # TCP port name
+      protocol: TCP
+      port: 9000   # Native TCP port
+      targetPort: 9000
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clickhouse
+  labels:
+    app: clickhouse
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clickhouse
+  template:
+    metadata:
+      labels:
+        app: clickhouse
+    spec:
+      containers:
+      - name: clickhouse
+        image: bitnami/clickhouse:latest
+        ports:
+          - containerPort: 8123   # HTTP port
+          - containerPort: 9000   # Native TCP port
+        env:
+          - name: ALLOW_EMPTY_PASSWORD
+            value: "yes"                  # Allow connections without a password
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1"
