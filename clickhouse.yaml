@@ -42,7 +42,12 @@ spec:
           - containerPort: 9000   # Native TCP port
         env:
           - name: ALLOW_EMPTY_PASSWORD
-            value: "yes"                  # Allow connections without a password
+            value: "no"
+          - name: CLICKHOUSE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: clickhouse-credentials
+                key: password
         resources:
           requests:
             memory: "512Mi"
