@@ -55,5 +55,3 @@ spec:
     - port: 8080
       targetPort: 8080
   type: ClusterIP
-  externalIPs:
-    - 172.31.2.98

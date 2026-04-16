@@ -25,10 +25,10 @@ public class DemoApplication {
 
   @GetMapping("/")
   public String home() {
-    String tmp = environment.getProperty("HOSTNAME");
-  	String dummy = "Spring is here again!" + tmp;
+    String tmp = environment.getProperty("HOSTNAME", "unknown");
+    String dummy = "Spring is here again!" + tmp;
     String event = UUID.randomUUID().toString();
-    log.info(event);
+    log.info("Request processed: eventId={}", event);
     return dummy;
   }
 }

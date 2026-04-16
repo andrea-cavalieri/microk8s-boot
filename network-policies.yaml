@@ -1,0 +1,59 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: clickhouse-network-policy
+  labels:
+    app: clickhouse
+spec:
+  podSelector:
+    matchLabels:
+      app: clickhouse
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow only from Spring Boot app
+    - from:
+        - podSelector:
+            matchLabels:
+              app: spring-boot-k8s
+      ports:
+        - protocol: TCP
+          port: 8123
+        - protocol: TCP
+          port: 9000
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: spring-boot-k8s
+      ports:
+        - protocol: TCP
+          port: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: spring-boot-network-policy
+  labels:
+    app: spring-boot-k8s
+spec:
+  podSelector:
+    matchLabels:
+      app: spring-boot-k8s
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow ingress from external traffic (needs Ingress controller in production)
+    - {}
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: clickhouse
+      ports:
+        - protocol: TCP
+          port: 8123
+        - protocol: TCP
+          port: 9000
